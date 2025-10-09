@@ -1,5 +1,6 @@
 # Alternate parameterisations of various distributions
-library(mc2d) #for the standrd PERT distribution parameterised by min, mode, max
+# for the standrd PERT distribution parameterised by min, mode, max
+library(mc2d) #(version "0.1-21")
 
 ## PERT
 ppert_alt <- function (q, mode = 0, lowq = -1, highq = 1,

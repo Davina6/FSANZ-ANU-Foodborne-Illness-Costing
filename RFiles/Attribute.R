@@ -182,9 +182,9 @@ gc()
 
 #Epi tables
 EpiList %>%
-  subset(Pathogen == 'All pathogens'  & Disease == "Initial") %>%
+  subset(Pathogen == 'All pathogens') %>%
   ungroup %>%
-  group_by(Measure) %>%
+  group_by(Measure, Disease) %>%
   group_walk(~{.x %>%
       rename(X5. = '5%', X95. = '95%') %>%
       medianCIformat(unit = 1) %>%
@@ -280,7 +280,7 @@ ggsave(filename = 'AttributionReport/CostBySourcePathogen.png',P.CostProp, width
 P.EpiProp <- CombinedSummaries %>%
   subset(Pathogen != 'All pathogens') %>%
   mutate(median = if_else(Measure == 'Cases', median/1000,
-                          if_else(Measure == "Cost", median/1000000, median))) %>%
+                              if_else(Measure == "Cost", median/1000000, median))) %>%
   mutate(Measure = recode(Measure,
                           Cases = 'Cases (thousands)',
                           Cost = 'Cost (AUD millions)')) %>%
@@ -303,6 +303,35 @@ P.EpiProp <- CombinedSummaries %>%
         text = element_text(size = 20))
 P.EpiProp
 ggsave(filename = 'AttributionReport/EpiBySourcePathogen.png',P.EpiProp, width = 3600, height = 1787, units = 'px')
+
+# write a table with the same information but including an 'all pathogens' outcome
+
+measure.units <- c(Cases = 1e3, Cost = 1e6, Hospitalisations = 1, Deaths = 1)
+measure.round <- c(Cases = FALSE, Cost = FALSE, Hospitalisations = TRUE, Deaths = TRUE)
+digits.round <-  c(Cases = NA,   Cost = NA,   Hospitalisations = 0, Deaths = 0)
+
+CombinedSummaries %>%
+  rename(X5. = `5%`, X95. = `95%`) %>%
+  mutate(unit = measure.units[Measure],
+         digits.round = digits.round[Measure],
+         measure.round = measure.round[Measure]) %>%# View
+  mutate(Measure = factor(Measure, levels = c('Cases', 'Hospitalisations', "Deaths",
+                                              'Cost'))) %>% #View
+  group_by(Measure) %>%
+  medianCIformat(unit = unit, round = measure.round,
+                 digits.round = digits.round) %>%
+  select(Measure, Pathogen, Source, Cost) %>%
+  pivot_wider(names_from = Measure, values_from = Cost) %>%
+  #filter(!(Cases == '0' & Cost == '0')) %>%
+  mutate(across(Cases:Cost, \(.x){ifelse(.x == '0' & Cases == '0', '0*', .x)})) %>%
+  mutate(Deaths = ifelse(Cases != '0' & Deaths == '0', '<1', Deaths) ,
+         Source = Source %>% factor(unique(Source)) %>% fct_relevel(c('Other','All Food'), after = Inf)) %>%
+  arrange(Pathogen, Source) %>%
+  rename(`Cases (thousands)` = Cases,
+         `Cost (AUD millions)` = Cost) %>%
+  write.csv('AttributionReport/EpiBySourcePathogen.csv', row.names = FALSE)
+
+
 P.EpiProp$data <- P.EpiProp$data %>% subset(Measure != 'Cost (AUD millions)')
 ggsave(filename = 'AttributionReport/EpiBySourcePathogenNoCost.png',P.EpiProp, width = 3600, height = 1787, units = 'px')
 

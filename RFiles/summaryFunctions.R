@@ -107,15 +107,18 @@ tidyNumber <- function(n,unit = 1000, round = TRUE, digits.round = 0, sf = 3, ma
 }
 
 medianCIformat <- function(df,unit = 1000,newline = TRUE,round = FALSE,digits.round = 0,dropnullinterval = TRUE){
+  unit = enquo(unit)
+  digits.round = enquo(digits.round)
+  round <- enquo(round)
   df %>%
-    mutate(across(c(X5.,X95.,median),~tidyNumber(.x,unit, round, digits.round))) %>%
+    mutate(across(c(X5.,X95.,median),~tidyNumber(.x, !! unit, !! round, !! digits.round))) %>%
     mutate(across(c(X5.,X95.),           #remove intervals when they are the same as the point estimate
-                  ~if_else(.x == median & dropnullinterval,
+                  ~if_else(X5. == median & X95. == median & dropnullinterval,
                            '',
                            .x))) %>%
-    mutate(Cost = if_else(X5. == '',  #merge cost and and interval into a single line
+    mutate(Cost = if_else(X95. == '',  #merge cost and and interval into a single line
                           median,
-                          paste0(median, ifelse(newline,'\n',' '), '(',X5.,' - ',X95.,')')))
+                          paste0(median, ifelse(newline,'\r',' '), '(',X5.,' - ',X95.,')')))
 }
 
 
