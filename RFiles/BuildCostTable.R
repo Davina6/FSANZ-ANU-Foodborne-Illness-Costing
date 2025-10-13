@@ -7,9 +7,9 @@ YearDeaths <- 2024  #Year for determining population for population-adjusting es
 YearCases <- 2024 # Year that notification data and population estimates are taken from for estimating cases
 YearHosp <- 2023 # Financial year that hospitalization data is taken from --- FY2024 will probably not be available until Nov 2025 given historical reporting timelines
 
-ndraws <- 10^5 #number of random draws for each estimate
+ndraws <- 10^6 #number of random draws for each estimate
 #Set random seed for reproducibility
-set.seed(20250605) #I suggest choosing the date of the last run on which inputs/code changed in ways that effected the outputs
+set.seed(20251013) #I suggest choosing the date of the last run on which inputs/code changed in ways that effected the outputs
 
 
 source("./RFiles/Distributions.R")
@@ -227,8 +227,11 @@ write.csv(CostSummaries$Categorised,'./Outputs/CostTableCategories.csv')
 
 gc()
 # save workspace in two versions; one light version to be used by the shiny app
-# and another larger version with everything
-save.image('AusFBDiseaseImage.RData')
+# and another larger version with everything (optional can be very large)
+
+#save.image('AusFBDiseaseImage.RData') #saves full image --- can be very large
+
+
 UnusedLargeObjects <- c('CostList','SequelaeFractions','TotalCostByPathogen',
                         'TotalIncidence')
 #trim DeathList, HospList, and IncidenceList down to 1000 draws
