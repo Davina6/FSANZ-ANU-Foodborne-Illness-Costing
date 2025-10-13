@@ -356,7 +356,7 @@ PathogenAssumptions <- list(
                  specialist = rdist('discrete', value = 0, continuous = FALSE), #none
                  specialistToWhom = "None",
                  underdiagnosis = rdist("pert", min = 1, mode = 2, max = 3),
-                 hospPrincipalDiagnosis = rdist("discrete", value = 0.65, continuous = FALSE),
+                 hospPrincipalDiagnosis = rdist("discrete", value = 0.44, continuous = FALSE),
                  mortCodes = 'A04.3',
                  hospCodes = "A04.3",
                  hospMethod = 'AIHW',

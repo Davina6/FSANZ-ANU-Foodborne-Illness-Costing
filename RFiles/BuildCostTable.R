@@ -3,7 +3,7 @@ library(tidyverse)
 # Set year
 # As data sources release on different schedules, source year can be vary
 EstQ <- "Dec-24" #quarter for overall cost estimates
-YearDeaths <- 2024  #Year for determing population for population-adjusting estimates deaths (does not change data source for deaths)
+YearDeaths <- 2024  #Year for determining population for population-adjusting estimates deaths (does not change data source for deaths)
 YearCases <- 2024 # Year that notification data and population estimates are taken from for estimating cases
 YearHosp <- 2023 # Financial year that hospitalization data is taken from --- FY2024 will probably not be available until Nov 2025 given historical reporting timelines
 

@@ -279,18 +279,18 @@
 "278","Hospitalisations","Salmonella Typhi","Initial and sequel disease","5-64",29.0673327954195,9.8913875646011,65.4604738563429
 "279","Hospitalisations","Salmonella Typhi","Initial and sequel disease","65+",0.992543071063104,0.337754697327842,2.23523569265561
 "280","Hospitalisations","Salmonella Typhi","Initial and sequel disease","All ages",33.1792969469666,11.2906570249593,74.7207360116305
-"281","Hospitalisations","STEC","STEC","<5",8.23395053983152,4.34324069990251,13.649954835987
-"282","Hospitalisations","STEC","STEC","5-64",23.047484862943,12.1401730420303,38.1926428288713
-"283","Hospitalisations","STEC","STEC","65+",21.37863082263,11.3582082185147,35.4589097785131
-"284","Hospitalisations","STEC","STEC","All ages",53.7983265097234,37.1884661176042,74.023963787991
+"281","Hospitalisations","STEC","STEC","<5",12.1637905702057,6.4161510339469,20.164706007708
+"282","Hospitalisations","STEC","STEC","5-64",34.0474208202567,17.9343465393629,56.4209496335598
+"283","Hospitalisations","STEC","STEC","65+",31.5820682607034,16.7791712318967,52.3824803546216
+"284","Hospitalisations","STEC","STEC","All ages",79.4748005257278,54.9375067646425,109.353582868623
 "285","Hospitalisations","STEC","Haemolytic uremic syndrome","<5",11.5434314380413,4.37783857172033,29.1777724907759
 "286","Hospitalisations","STEC","Haemolytic uremic syndrome","5-64",55.5826414977577,21.0796792247657,140.493550532416
 "287","Hospitalisations","STEC","Haemolytic uremic syndrome","65+",15.9746047096911,6.05835804036597,40.3782345268152
 "288","Hospitalisations","STEC","Haemolytic uremic syndrome","All ages",83.1006776454901,31.515875836852,210.049557550007
-"289","Hospitalisations","STEC","Initial and sequel disease","<5",20.3201676531845,11.4619418212043,38.1880886711857
-"290","Hospitalisations","STEC","Initial and sequel disease","5-64",79.9267386581399,42.211692150601,165.326329842045
-"291","Hospitalisations","STEC","Initial and sequel disease","65+",38.8438124885209,22.7230013496249,65.5400936782875
-"292","Hospitalisations","STEC","Initial and sequel disease","All ages",138.250892533135,82.5052016012923,265.783797882782
+"289","Hospitalisations","STEC","Initial and sequel disease","<5",24.5667096047484,14.2600223577944,42.9141479531658
+"290","Hospitalisations","STEC","Initial and sequel disease","5-64",91.796180899159,50.9157979562432,177.803045067856
+"291","Hospitalisations","STEC","Initial and sequel disease","65+",49.5191349258685,29.2358032655454,79.5498406604508
+"292","Hospitalisations","STEC","Initial and sequel disease","All ages",164.958506923749,104.760176148717,293.342630454485
 "293","Hospitalisations","Yersinia Enterocolitica","Yersiniosis","<5",15.521515316506,9.69523190319102,22.2081333378336
 "294","Hospitalisations","Yersinia Enterocolitica","Yersiniosis","5-64",77.6684051440244,48.5911905554485,111.404180867351
 "295","Hospitalisations","Yersinia Enterocolitica","Yersiniosis","65+",54.3653783484927,34.0521099057225,77.9013438151626

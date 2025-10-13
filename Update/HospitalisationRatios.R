@@ -2,6 +2,19 @@
 
 library(tidyverse)
 
+# Step 0:Done outside R
+
+# Data is stored in password protected format and should not be shared publicly
+# on GitHub. Also, data was provided in two parts: Part A which had the bulk of
+# the data, and part B which included a few rows that were suppressed at first
+# pending jurisdictional clearance. Therefore before running the below script
+# you need to combine the two documents into a machine readable (non-password
+# protected) spreadsheet. The way to do this is to copy Part A into a new
+# spreadsheet and then complete the missing rows by copying from part B. The
+# combined spreadsheet should then be stored at the location given below and
+# then deleted once this script has been run
+
+ReadibleDataLocation <- "path/to/file.xslx"
 
 # Read in hospitalisation numbers  ------------------------------------
 
@@ -18,10 +31,10 @@ meta <- data.frame(FY = 2019:2023, ## FY is the year of the end e.g. FY2019 is A
 d <- meta %>% 
   group_by(FY, Kind) %>%
   group_modify(~{
-    readxl::read_excel(path = "./Update/NonPublicData/AH2024-0038 - Part A - Unprotected.xlsx",
-                                  sheet = paste(.y$Kind, 'diagnosis'),
-                                  range = readxl::cell_limits(ul = c(.x$StartRow,1), 
-                                                              lr = c(.x$EndRow, 16)))
+    readxl::read_excel(path = ReadibleDataLocation,
+                       sheet = paste(.y$Kind, 'diagnosis'),
+                       range = readxl::cell_limits(ul = c(.x$StartRow,1), 
+                                                   lr = c(.x$EndRow, 16)))
     }) %>%
 # convert to long form for age groups
   ungroup() %>%
