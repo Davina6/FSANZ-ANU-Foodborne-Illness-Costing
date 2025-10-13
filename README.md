@@ -80,7 +80,7 @@ The main script in the programme is `Rfiles/BuildCostTable.R`. Once data and dat
 
 > **Note:** If you are just updating an existing estimate for inflation, you can skip this step and go straight to running the shiny app. 
 
-1. Set your working directory to the top level folder for the project
+1. Open the project file `FSANZ-ANU-Foodborne-Illness-Costing.Rproj`. This should automatically also activate `renv` which will ensure that you have the correct versions of every package you need.
 
 2. Open `Rfiles/BuildCostTable.R`. You will be making a few small edits to opening ~15 lines of this script before running the whole thing.
 
@@ -101,16 +101,19 @@ The main script in the programme is `Rfiles/BuildCostTable.R`. Once data and dat
 5. Set the random seed for random number generation. If you don't make changes to code or inputs, running the code twice with the same random seed shouldn't change the results. This is helpful for reproducibility and to identify if changes to the code are making any difference to the outputs.
 
    ```R
-   set.seed(20250605) #I suggest choosing the date of the last run on which inputs/code changed in ways that effected the outputs
+   set.seed(20251013) #I suggest choosing the date of the last run on which inputs/code changed in ways that effected the outputs
    ```
 
-6. Run the entire script `Rfiles/BuildCostTable.R`. This may take a couple minutes.
+6. Run the entire script `Rfiles/BuildCostTable.R`. This may take ~10 minutes. 
 
    * If there are any errors: Fix errors then clear your workspace before trying to re-run script
      ```R
      rm(list = ls(all.names = TRUE))
      ```
-   * If there are no errors: All model outputs have been updated! 
+   * If there are no errors: All model outputs have been updated!
+   
+> **Note:** If you running into errors and find you have to run the model multiple times to fix them, you could speed up run-time be reducing the number of random draws taken. This is set on line ~10 and is currently set to `10^6` (i.e. one million). When you have identified any bugs you can set to the defaul values again.
+
 
 ## Where are model outputs stored?
 
@@ -137,7 +140,7 @@ If you want to make a version of this app that can be accessed by anyone using a
 
 ## How do I make custom figures and summary tables from results?
 
-The outputs in `./Outputs` are all designed to be easily machine readable so can be used to create Figures and tables. programmatically. For example code and outputs for figures See `./Report/Figures.R` and `./Paper and Presentations`. For example code and outputs for summary tables see `./Report/BuildReportTables.R` and the many csv files in the same folder (e.g. `./Report/DetailedCostTable.All pathogens.Initial Disease.csv`).
+The outputs in `./Outputs` are all designed to be easily machine readable so can be used to create Figures and tables programmatically. For example code and outputs for figures See `./Report/Figures.R` and `./Paper and Presentations`. For example code and outputs for summary tables see `./Report/BuildReportTables.R` and the many csv files in the same folder (e.g. `./Report/DetailedCostTable.All pathogens.Initial Disease.csv`).
 
 # Details of each data type 
 
@@ -231,7 +234,7 @@ In the final step we multiply cost items by unit prices.
   The willingness to be pay values (elicited in units of per day or per year) are multiplied by total estimated duration of illness (estimated as above) to get total cost of pain and suffering. As these values come from a research study, any update will likely update the format of the data and thus the data importation and the estimation process. However, currently the WTP values and descriptions of uncertainty are stored in `Data/WTPvaluesUncertainty.xlsx` and read into the model by `getWTP()` in `Rfiles/loadData.R`. As WTP values are reported in 2017 dollars, these costs need to be adjusted for inflation.
 
 - **Inflation (2024 and earlier, ABS)** Storage format 1
-  The base costs estimates are for December 2024 and expressed in 2024 dollars. Most unit costs were sourced late 2024 or early 2025 so do not require inflation adjustments. However WTP values for grief, pain, and suffering are estimated in 2017 dollars and need to be adjusted up to Dec 2024. Additionally the shiny app has the option to adjust costs to the latest quarter without updating all the underlying data. CPI data is stored in `Data/CPI-ABS.csv` in the format published by the [ABS](https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release) (Accessed June 2025). 
+  The base costs estimates are for December 2024 and expressed in 2024 dollars. Most unit costs were sourced late 2024 or early 2025 so do not require inflation adjustments. However WTP values for grief, pain, and suffering are estimated in 2017 dollars and needed to be adjusted up to Dec 2024. Additionally the shiny app has the option to adjust all costs to the latest quarter without updating all the underlying data. CPI data is stored in `Data/CPI-ABS.csv` in the format published by the [ABS](https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release) (Accessed June 2025). 
 
   Assuming that the ABS continues to use the same format for these downloads and continues to include dates back to Dec 2017, the `Data/CPI-ABS.csv` can be replaced by the latest release to include the latest CPI rates. However, if the ABS changes the format, the input file can be updated by appending the CPI values for the latest financial quarters in a consistent format. Note that the program uses the 'change from previous quarter' column of the file, so any appended CPI rates should *not* be annualised.
 

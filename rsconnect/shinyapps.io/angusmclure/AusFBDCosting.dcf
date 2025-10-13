@@ -5,7 +5,7 @@ account: angusmclure
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4796371
-bundleId: 10401042
+bundleId: 11026718
 url: https://angusmclure.shinyapps.io/AusFBDCosting/
 asMultiple: FALSE
 asStatic: FALSE
