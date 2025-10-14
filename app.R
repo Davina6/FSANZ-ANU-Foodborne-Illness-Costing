@@ -3,20 +3,18 @@ library(shiny)
 library(shinyBS)
 library(shinyjs)
 library(tidyverse)
-library(stringr)
 library(mc2d) #for the standard PERT distribution parameterised by min, mode, max
 load('Outputs/AusFBDiseaseImage-Light.RData', globalenv())
 source("Outbreak.R")
+source("RFiles/loadCPIData.R")
 
-CPIData <- read.csv('Data/CPI-ABS.csv',skip = 1,
-                    col.names = c('Quarter', 'Change.Quarterly', 'Change.Annual')) %>%
-  drop_na() %>%
-  mutate(Date = as_date(paste0('01-',Quarter),format = '%d-%m-%y')) %>%
-  subset(Date > as_date('2019-12-01')) %>%
-  arrange(Date) %>%
-  mutate(Cumm.Inflation.Multiplier = cumprod(1+Change.Quarterly/100),
-         CummCPI = 100*(Cumm.Inflation.Multiplier-1)) %>%
-  `row.names<-`(.$Quarter)
+# Set year for reference point for inflation adjustments and banner text 
+ReferenceYear <- 2024
+CPIReferenceQuarter <- "Dec-24" #Follows ABS naming convention for quarters. Quarter's name is the three letter abbr of last month followed by last two digits of year, e.g. 'Dec-24'
+CPIReferenceQuarterText <- paste(CPIReferenceQuarter, '(Baseline - No adjustment)')
+
+
+CPIData <- getCPI(CPIReferenceQuarter)
 InitialDiseaseNames <- c(unlist(map(PathogenAssumptions, ~.x$name)), `All pathogens` = 'Initial')
 
 CostTable <- read.csv("Outputs/CostTable.csv") %>%
@@ -102,8 +100,8 @@ ui <- fluidPage(
                               fluidRow(column(width = 6,
                                               selectInput('Quarter.Inflation',
                                                    'Quarter for Inflation adjustment',
-                                                   c('Dec-19 (Baseline - No adjustment)',CPIData$Quarter),
-                                                   selected = 'Dec-19 (Baseline - No adjustment)',
+                                                   c(CPIReferenceQuarterText,CPIData$Quarter),
+                                                   selected = CPIReferenceQuarterText,
                                                    multiple = FALSE)),
                                        column(6,
                                               HTML('<br />'), #add some vertical whitespace
@@ -346,11 +344,12 @@ server <- function(input, output) {
 
   #Multiplier for inflation calculations
   InflationMult <- reactiveVal(1)
-  BasicBanner <- 'Burden and cost estimates circa 2019 with data from 2019 or older,'
+  BasicBanner <- paste0('Burden and cost estimates circa ',ReferenceYear,
+                        ' with data from ', ReferenceYear,' or older,')
   observeEvent(input$Quarter.Inflation,{
-    if(input$Quarter.Inflation == 'Dec-19 (Baseline - No adjustment)'){
+    if(input$Quarter.Inflation == CPIReferenceQuarterText){
       InflationMult(1)
-      output$Banner <- renderText(c(BasicBanner,' with no inflation adjustment to present.',sep = ''))
+      output$Banner <- renderText(c(BasicBanner,' with no inflation adjustment.',sep = ''))
     }else{
       InflationMult(CPIData[input$Quarter.Inflation,'Cumm.Inflation.Multiplier'])
       output$Banner <- renderText(c(BasicBanner,' with cost estimates inflation adjusted to ', input$Quarter.Inflation, ' (',

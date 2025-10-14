@@ -1,5 +1,17 @@
 library(tidyverse)
 
+# Set year
+# As data sources release on different schedules, source year can be vary
+EstQ <- "Dec-24" #quarter for overall cost estimates
+YearDeaths <- 2024  #Year for determining population for population-adjusting estimates deaths (does not change data source for deaths)
+YearCases <- 2024 # Year that notification data and population estimates are taken from for estimating cases
+YearHosp <- 2023 # Financial year that hospitalization data is taken from --- FY2024 will probably not be available until Nov 2025 given historical reporting timelines
+
+ndraws <- 10^6 #number of random draws for each estimate
+#Set random seed for reproducibility
+set.seed(20251013) #I suggest choosing the date of the last run on which inputs/code changed in ways that effected the outputs
+
+
 source("./RFiles/Distributions.R")
 source("./RFiles/ClassDefinitions.R")
 source("./RFiles/Diseases.R")
@@ -8,7 +20,8 @@ source('./RFiles/summaryFunctions.R')
 source("./RFiles/estimationFunctions.R")
 
 
-#Load all the data and assumptions
+
+### Load all the data and assumptions
 NNDSSIncidenceAgegroup <- getCasesNNDSSAgeGroup() %>% subset(Disease != "STEC") #STEC is in the dataset, but quality of state surveillance deemed better.
 StateIncidenceAgeGroup <- getCasesStateAgeGroup()
 NotificationsAgeGroup <- bind_rows(NNDSSIncidenceAgegroup,StateIncidenceAgeGroup)
@@ -17,71 +30,101 @@ AusPopSingleYear <- getAusPopSingleYearAge() # Population by year for every age
 Hospitalisations <- getHospitalisationsAgeGroup()
 Costs <- getCosts()
 VSL <- getValueStatisticalLife()
-Deaths <- getABSDeaths() %>% subset(Method == "Underlying")
+Deaths <- getABSDeaths()
 MissedDaysGastro <- getMissedDaysGastro()
 FrictionRates <- getFrictionRates()
-Workforce <- getWorkforceAssumptions() ##What year is this for and does it need to change by year?
+Workforce <- getWorkforceAssumptions()
 
-# Some data completeness checks --- ADD TO THESE --- SOME OF THESE SHOULD BE ERRORS NOT WARNINGS
+### CPI adjustment
+#The only CPI adjustment is for WTP estimates for pain and suffering (values taken from CHERE report in 2017 dollars)
+RefQ <- "Dec-17" #reference quarter for WTP values
+CPI <- getCPI(RefQ)[EstQ,"Cumm.Inflation.Multiplier"] 
+
+### Data completeness checks
 
 checkMissingCodes <- function(field, datacodes, action = stop){
-  UsedCodes <- map(c(PathogenAssumptions, SequelaeAssumptions), ~.x[[field]]) %>% unlist %>% unique
+  UsedCodes <- map(c(PathogenAssumptions, SequelaeAssumptions), ~.x[[field]])
+  UsedCodesUnlist <- UsedCodes %>% unlist %>% unique
   AllCodes <- datacodes %>% unique
-  MissingCodes <- setdiff(UsedCodes,AllCodes)
-
+  MissingCodes <- setdiff(UsedCodesUnlist, AllCodes)
+  
   if(length(MissingCodes)){
     message <- paste0('Some of the ', field, ' required by the model are missing from the data :\n   ',
                       paste(MissingCodes, collapse = '\n   '))
+    
+    ## Flag T/F if all data for a disease is missing. True if the disease has
+    ## any codes listed BUT none of these codes are in the data. I.e. does not
+    ## flag a problem for GBS for which we have not listed or used the hosp
+    ## codes (because we assume all cases are hospitalised)
+    
+    MissingDiseases <- map(UsedCodes,~{
+      PresentCodes <- intersect(.x, AllCodes)
+      !length(PresentCodes) & length(.x)
+      
+    }) %>% unlist()
+    
+    if(any(MissingDiseases)){
+      message <- paste0('Some diseases are missing all ', field, ' :\n   ',
+                        paste(names(MissingDiseases)[MissingDiseases], collapse = '\n   '),
+                        '\n', message)
+    }
     action(message)
   }
-
 }
 
 checkSurplusCodes <- function(field, datacodes, action = stop){
-  UsedCodes <- map(c(PathogenAssumptions, SequelaeAssumptions), ~.x[[field]]) %>% unlist %>% unique
+  UsedCodes <- map(c(PathogenAssumptions, SequelaeAssumptions), ~.x[[field]])
   AllCodes <- datacodes %>% unique
   SurplusCodes <- setdiff(AllCodes,UsedCodes)
   
   if(length(SurplusCodes)){
-    warning('Some of the ', field, ' provided in the data are not used in the model:\n   ',
-            paste(SurplusCodes, collapse = '\n   '))
+    action('Some of the ', field, ' provided in the data are not used in the model:\n   ',
+           paste(SurplusCodes, collapse = '\n   '))
   }
 }
 
 
-checkMissingCodes('mortCodes', Deaths$Cause, action = warning)
+checkMissingCodes('mortCodes', Deaths$Cause, action = stop)
 checkSurplusCodes('mortCodes', Deaths$Cause, action = warning)
 
 
 #This second check is perhaps not needed for the hospitalisation data, as this
 #dataset only has rows if there are any hospitalisations recorded (there are no
 #rows with zero separations). If the model finds no rows it already interprets
-#as no seperations, so perhaps we need a seperate check to see if input codes
+#as no separations, so perhaps we need a separate check to see if input codes
 #are valid in the future
 checkMissingCodes('hospCodes', Hospitalisations$DC4D, action = warning)
 
+checkMissingCodes('hospCodes',
+                  subset(Hospitalisations, Year == "2022-23")$DC4D,
+                  action = warning)
+
+
+
 
 # Draw from all distributions
-ndraws <- 10^5
-set.seed(20220222) #Date at time of final run
-Year <- 2019
 
-WTPList <- getWTP(ndraws)
+WTPList <- getWTP(ndraws) %>%
+  map_depth(2,~{.x * CPI}) #adjust costs from 2017 dollars to present
 
-IncidenceList <- makeIncidenceList(Year,
+IncidenceList <- makeIncidenceList(year = YearCases, # This uses the most recent NNDSS notifications extracted above from the /Data folder
                                    pathogens = PathogenAssumptions,
                                    ndraws = ndraws,
                                    gastroRate = gastroRate)
 
 SequelaeFractions <- calcSequelaeFractions(IncidenceList)
-HospList <- makeHospList(Year,
+HospList <- makeHospList(year = YearHosp, # This uses the most recent AIHW separations extracted above from the /Data folder
                          IncidenceList,
                          pathogens = PathogenAssumptions,
                          ndraws = ndraws)
-DeathList <- makeDeathList(Year,
+DeathList <- makeDeathList(year = YearDeaths,  # This uses ABS population data for the year of choice to population adjust ABS-death data (averaged over a decade) to the year of choice
                            pathogens = PathogenAssumptions,
                            ndraws = ndraws)
-CostList <- makeCostList(Year, PathogenAssumptions, ndraws, discount = 0) # no discounting and assuming a 5 year duration of ongoing illness is equivalent to the cross-sectional approach if we assume that case numbers were the same over the past five years.
+CostList <- makeCostList(yearNNDSS = YearCases, # this uses the most recent NNDSS notification data (for certain costs that are only for notifications and not for all cases) 
+                         yearAIHW = YearHosp, #and the most recent AHIW hospitalisation data (to estimate the LOS to determine time off work)
+                         PathogenAssumptions,
+                         ndraws,
+                         discount = 0) # no discounting and assuming a 5 year duration of ongoing illness is equivalent to the cross-sectional approach if we assume that case numbers were the same over the past five years.
 
 ### Include sequelae as part of 'All gastro'
 
@@ -116,8 +159,6 @@ HospList <- appendAllPathogens(HospList,add)
 DeathList <- appendAllPathogens(DeathList,add)
 IncidenceList <- appendAllPathogens(IncidenceList,add)
 
-
-
 warning('When summing across agegroups the draws of the multipliers used for each agegroup are considered independent. Making them dependent would require reworking the whole program, and is not necessarily a better assumption, but it is something to be aware of')
 
 #Include `All ages` and `All diseases` sums, calculate median, and 90 CIs, then reformat as data.frame
@@ -137,11 +178,11 @@ summariseCostList <- function(list){
     map_depth(2,~{.x$`All ages` <- do.call(add,unname(.x));.x}) %>%
     map(~{.x$`Initial and sequel disease` <- do.call(add2,unname(.x));.x})
   Detailed <- totals %>% quantilesNestedList(4, c("Pathogen", "Disease","AgeGroup","CostItem"))
-
+  
   DirectCat <- c('GPSpecialist','ED','Hospitalisation','Tests','Medications')
   WTPCat <- c('WTP', 'WTPOngoing')
   LostProdCat <- c("HumanCapital","FrictionHigh", "FrictionLow")
-
+  
   Categorised <- totals %>%
     map_depth(3,~{
       .x$Direct <- reduce(.x[DirectCat],`+`) #sum over direct costs
@@ -151,7 +192,7 @@ summariseCostList <- function(list){
       .x
     }) %>%
     quantilesNestedList(4, c("Pathogen", "Disease","AgeGroup","CostItem"))
-
+  
   list(Categorised = Categorised, Detailed = Detailed)
 }
 
@@ -184,9 +225,13 @@ CostSummaries <- summariseCostList(CostList)
 write.csv(CostSummaries$Detailed,'./Outputs/CostTable.csv')
 write.csv(CostSummaries$Categorised,'./Outputs/CostTableCategories.csv')
 
+gc()
 # save workspace in two versions; one light version to be used by the shiny app
-# and another larger version with everything
-save.image('AusFBDiseaseImage.RData')
+# and another larger version with everything (optional can be very large)
+
+#save.image('AusFBDiseaseImage.RData') #saves full image --- can be very large
+
+
 UnusedLargeObjects <- c('CostList','SequelaeFractions','TotalCostByPathogen',
                         'TotalIncidence')
 #trim DeathList, HospList, and IncidenceList down to 1000 draws

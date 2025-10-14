@@ -1,4 +1,4 @@
-warning('Year 2019 is used to estimate LOS -- should there be an option for year or an option to use all data available?')
+warning('The most recent year of AIHW data is used to estimate hospital LOS -- should there be an option for year or an option to use all data available?')
 
 
 costOutbreak <- function(pathogen,
@@ -62,7 +62,7 @@ costOutbreak <- function(pathogen,
                          notifications = notifications,
                          separations = separations,
                          deaths = deaths,
-                         year = 2019, #Year is used to estimate LOS -- should there be an option for NA or ALL which uses all data available?
+                         year = 'most_recent', #Year is used to estimate LOS -- should there be an option for NA or ALL which uses all data available?
                          discount = 0) #We are not even using discounting any more so I might drop this argument all together?
   out <- list(cases = cases, deaths = deaths, separations = separations, costs = costs)
 }

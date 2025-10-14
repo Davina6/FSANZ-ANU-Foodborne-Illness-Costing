@@ -196,7 +196,7 @@ write_excel_csv(Table1, './Report/Table1.csv')
 
 AgeGroups <- c("<5","5-64","65+")
 names(AgeGroups) <- c("<5","5-64", "65+")
-year <- 2019
+year <- 2024
 TimeOffWork <- map(PathogenAssumptions, function(.p){
   map(AgeGroups, function(.a){
     SepData <- subset(Hospitalisations, DC4D %in% .p$hospCode & AgeGroup == .a & FYNumeric == year)

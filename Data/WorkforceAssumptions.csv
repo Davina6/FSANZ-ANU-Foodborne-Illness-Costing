@@ -1,5 +1,5 @@
-AgeGroup,Income,PropNeedsCarer,PropInWorkforce
-<5,0,1.0,0
-5-64,354,0.33,0.67
-65+,275,0.33,0.15
-15-64,354,,0.8
+AgeGroup,Income,PropNeedsCarer,PropInWorkforce,Source_Income,Date_Income,Note_Income
+<5,0,1,0,,,
+5-64,409,0.33,0.67,"6302.0 Average Weekly Earnings, Australia",`Nov 2024,One fifth of weekly Earnings Persons (male and female); Full Time; Adult; Total earnings;
+65+,314,0.33,0.15,"63060DO001_202305 Employee Earnings and Hours, Australia, May 2023",`May 2023,One fifth of average weekly total cash earnings for all employees (full or part time) aged 55 and over
+15-64,409,,0.8,"6302.0 Average Weekly Earnings, Australia",`Nov 2023,One fifth of weekly Earnings Persons (male and female); Full Time; Adult; Total earnings;

@@ -1,9 +1,9 @@
 
 ## Introduction
 
-This application summarises Australian national estimates of burden and cost of foodborne disease for ten priority pathogens and four sequel illnesses circa 2019. The work was commissioned by Food Standards Australia New Zealand (FSANZ) and the Australian Commonwealth Department of Health, and conducted by a team of experts from The Australian National University led by [Prof Katie Glass](https://researchers.anu.edu.au/researchers/glass-ka), with model development led by [Dr Angus McLure](https://researchers.anu.edu.au/researchers/mclure-at). The full report and methodology has been published as a [report](https://www.foodstandards.gov.au/publications/Documents/ANU%20Foodborne%20Disease%20Final%20Report.pdf) by FSANZ, and is soon to appear as a [peer-reviewed journal article](https://home.liebertpub.com/publications/foodborne-pathogens-and-disease/108) in *Foodborne Pathogens and Disease*.
+This application summarises Australian national estimates of burden and cost of foodborne disease for ten priority pathogens and four sequel illnesses circa 2024. This model updates a 2021 project commissioned by Food Standards Australia New Zealand (FSANZ) and the Australian Commonwealth Department of Health, and conducted by a team of experts from The Australian National University led by [Prof Katie Glass](https://researchers.anu.edu.au/researchers/glass-ka), with model development led by [Dr Angus McLure](https://researchers.anu.edu.au/researchers/mclure-at). The full outcomes and methodology for the 2021 project has been published as a [report](https://www.foodstandards.gov.au/publications/Documents/ANU%20Foodborne%20Disease%20Final%20Report.pdf) by FSANZ, and as a [peer-reviewed journal article](https://doi.org/10.1089/fpd.2023.0015) in *Foodborne Pathogens and Disease*. A [related report](https://www.foodstandards.gov.au/publications/annual-cost-foodborne-illness-australia-food-commodities-and-pathogens) commissioned by FSANZ provides estimates of cost and burden by food commodity which will be published as peer-reviewed journal article soon.
 
-There are five tabs:
+This tool has five tabs:
 
 -   **Info**: (Current tab) Provides an overview of the tool, a summary of data inputs, and allows for inflation rate adjustments.
 
@@ -19,9 +19,9 @@ There are five tabs:
 
 ## Data
 
-This app use the best data available to the team in 2021 to estimate burden and cost of disease around the year 2019. There were many data inputs, some up-to-date as of 2019-20, but others dating back to the early 2000s. Data for burden estimates include: 
+This app uses the best data available to the team in early 2025 to estimate burden and cost of disease around the year 2024. There were many data inputs, some up-to-date as of early 2025, but others dating back to the early 2000s. Data for burden estimates include: 
 
--   Number of notifications for nationally notifiable pathogens (2019, NNDSS)
+-   Number of notifications for nationally notifiable pathogens (2024, NNDSS)
 
 -   Number of foodborne gastroenteritis events per person per year from the second national gastroenteritis survey (2008, NGSII)
 
@@ -29,32 +29,34 @@ This app use the best data available to the team in 2021 to estimate burden and 
 
 -   Seroprevalence studies for Toxoplasma gondii infection collected 2005-2007 from Busselton, Western Australia (2020, Molan)
 
--   National population estimates (2019, ABS)
+-   National population estimates (2024, ABS)
 
--   Number of hospitalisations (2019, AIHW)
+-   Number of hospitalisations (FY 2022-23, AIHW)
 
--   Deaths (2001-2010, ABS)
+-   Deaths (2014-2023, ABS)
 
 
 Estimates of cost involve two broad steps. In step one we estimate the number of cost items (e.g. GP visits, doses of medication, time off work) based on burden estimates. In the second step we multiply cost items by unit prices. Data to inform the number of cost items comes from a range of data sources:
 
--   Number of days taken off work as estimated from the second national gastroenteritis survey (2008, NGSII)
+-   Number of days taken off work due to hospitalisation, estimated from average length of stay (FY 2022-23, AIHW)
 
--   Workforce participation rates (2020, ABS)
+-   Others days taken off work, estimated from the second national gastroenteritis survey (2008, NGSII)
 
--   Expert elicitation (Various sources)
+-   Workforce participation rates (2024, ABS)
+
+-   GP, ED, specialist, medication, and diagnostic testing utilisation rates per case estimated from expert elicitation (<2019, Various sources)
 
 Data to inform unit costs come from a range of sources:
 
--   Statistical value of life (2019, Department of Prime Minister and Cabinet)
+-   Statistical value of life (2024, Department of Prime Minister and Cabinet)
 
--   MBS and PBS fees (2019, Medicare)
+-   MBS and PBS fees (2025 Q1, Medicare)
 
--   Average weekly earnings (May 2020, ABS)
+-   Average weekly earnings for all adults (Nov 2024, ABS) and older adults (May 2023, ABS)
 
--   Willingness to avoid pain grief and suffering associated with disease estimated from a discrete choice experiment in Australia (2014, CHERE)
+-   Willingness to avoid pain grief and suffering associated with disease estimated from a discrete choice experiment in Australia ([2023, Manipis et al](https://doi.org/10.1007/s10198-022-01512-3))
 
--   Hospitalisation costs based on the average cost of the best matching Australian Refined Diagnosis Related Group (2019, IHACPA)
+-   Hospitalisation costs based on the average cost of the best matching Australian Refined Diagnosis Related Group (2025 Q1, IHACPA)
 
 
 ## Inflation adjustment

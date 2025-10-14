@@ -104,8 +104,7 @@ ggsave(P.CostPerPase,filename = 'Report/CostPerCase.png', width = 1904, height =
 ggsave(P.CostPerPase + theme(text = element_text(size = 14),
                              axis.title.y=element_blank(),
                              axis.text.y=element_blank(),
-                             axis.ticks.y=element_blank()) +
-         scale_y_log10(),
+                             axis.ticks.y=element_blank()),
        filename = 'Paper and Presentations/CostPerCase.png',
        height = 5, width = 5)
 
@@ -215,7 +214,7 @@ P.CostTotalsSequel <- CostTotalsSequel  %>%
         text = element_text(size =  12),
         axis.text.y = element_markdown(size = 12),
         axis.title.y=element_blank()) +
-  ylim(0, 425) +
+  ylim(0, 600) +
   ylab('Annual cost\n(millions AUD)')
 
 P.CostTotalsSequel
@@ -234,7 +233,7 @@ P.CostTotalsOnly <- CostTotalsOnly %>%
   theme(text = element_text(size =  12),
         axis.text.y = element_markdown(size = 12),
         axis.title.y=element_blank()) +
-  ylim(0, 425) +
+  ylim(0, 600) +
   ylab('Annual cost\n(millions AUD)')
 
 P.CostTotalsOnly
@@ -345,7 +344,7 @@ P.CostPerPaseTotals  <- CostPerCase %>%
         axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank()) +
-  ylim(0, 1000)
+  ylim(0, 500)
 P.CostPerPaseTotals
 ggsave(P.CostPerPaseTotals,
        filename = 'Paper and Presentations/CostPerCase.png',
