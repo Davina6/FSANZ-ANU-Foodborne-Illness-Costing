@@ -74,6 +74,15 @@ d <- d %>% subset(Descriptor %in% c(GastroDescriptors,"Gastroenteritis of unknow
 
 ## Summaries
 
+warning('All summaries treat data reported as "n.p" as missing and are excluded
+        from sums. This in effect treats "n.p" as zeros. For the purposes of
+        calculating hospitalisation ratios this is fine as long as every code
+        which is "n.p" for principal diagnoses is also "n.p" for additional
+        diagnoses in the same year, in which case it is equivalent to excluding
+        the data for that code for the whole year. I have manually checked this
+        to be the case in the complete dataset, however may not be the case for
+        future datasets.')
+
 KeyDiseases <- c(GastroDescriptors, "Gastroenteritis of unknown origin",
                  "Irritable Bowel Syndrome", "Toxoplasmosis", "Listeriosis",
                  "Reactive Arthritis",'Gastro (including unknown)',
